@@ -5,7 +5,9 @@ create extension if not exists pgcrypto;
 
 create table if not exists public.chat_v2_config (
   singleton boolean primary key default true check (singleton),
-  owner_id uuid not null references auth.users(id)
+  owner_id uuid references auth.users(id),
+  bootstrap_hash text,
+  check ((owner_id is null and bootstrap_hash is not null) or (owner_id is not null and bootstrap_hash is null))
 );
 
 create table if not exists public.chat_v2_rooms (
@@ -85,6 +87,8 @@ begin
   then raise exception 'invalid_name'; end if;
   if exists (select 1 from public.chat_v2_config c where c.owner_id = v_uid)
   then raise exception 'admin_cannot_register'; end if;
+  if exists (select 1 from public.profiles p where p.id = v_uid and p.lang = 'bg')
+  then raise exception 'legacy_access_revoked'; end if;
   insert into public.chat_v2_rooms (guest_id, guest_name)
   values (v_uid, trim(p_name))
   on conflict (guest_id) do nothing;
@@ -97,8 +101,30 @@ $$;
 revoke all on function public.chat_v2_register(text) from public, anon;
 grant execute on function public.chat_v2_register(text) to authenticated;
 
--- El propietario se añade separadamente, tras verificar su UUID.
--- INSERT INTO public.chat_v2_config(singleton,owner_id) VALUES (true, '<UUID>');
+-- La clave inicial de administración se introduce por SQL privado, nunca en GitHub.
+-- insert into public.chat_v2_config(singleton,bootstrap_hash)
+-- values (true, crypt('<SECRETO_PRIVADO>',gen_salt('bf',12)));
+
+create or replace function public.chat_v2_claim_admin(p_secret text)
+returns boolean language plpgsql security definer
+set search_path = ''
+as $
+declare
+  v_uid uuid := auth.uid();
+  v_updated integer;
+begin
+  if v_uid is null or p_secret is null or char_length(p_secret) > 200
+  then return false; end if;
+  update public.chat_v2_config c
+  set owner_id = v_uid, bootstrap_hash = null
+  where c.singleton and c.owner_id is null
+    and c.bootstrap_hash = public.crypt(p_secret, c.bootstrap_hash);
+  get diagnostics v_updated = row_count;
+  return v_updated = 1;
+end
+$;
+revoke all on function public.chat_v2_claim_admin(text) from public, anon;
+grant execute on function public.chat_v2_claim_admin(text) to authenticated;
 
 do $$
 begin
