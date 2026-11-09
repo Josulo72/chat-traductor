@@ -1,7 +1,7 @@
 {
-  "name": "Chat ES ↔ БГ",
+  "name": "Chat ES ↔ PT-BR",
   "short_name": "Chat",
-  "description": "Chat con traducción automática entre español y búlgaro.",
+  "description": "Chat privado con traducción automática entre español y portugués brasileño.",
   "start_url": ".",
   "scope": ".",
   "display": "standalone",
