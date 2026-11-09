@@ -103,7 +103,7 @@ grant execute on function public.chat_v2_register(text) to authenticated;
 
 -- La clave inicial de administración se introduce por SQL privado, nunca en GitHub.
 -- insert into public.chat_v2_config(singleton,bootstrap_hash)
--- values (true, crypt('<SECRETO_PRIVADO>',gen_salt('bf',12)));
+-- values (true, extensions.crypt('<SECRETO_PRIVADO>',extensions.gen_salt('bf',12)));
 
 create or replace function public.chat_v2_claim_admin(p_secret text)
 returns boolean language plpgsql security definer
@@ -118,7 +118,7 @@ begin
   update public.chat_v2_config c
   set owner_id = v_uid, bootstrap_hash = null
   where c.singleton and c.owner_id is null
-    and c.bootstrap_hash = public.crypt(p_secret, c.bootstrap_hash);
+    and c.bootstrap_hash = extensions.crypt(p_secret, c.bootstrap_hash);
   get diagnostics v_updated = row_count;
   return v_updated = 1;
 end
