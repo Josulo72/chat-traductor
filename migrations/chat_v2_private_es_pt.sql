@@ -108,7 +108,7 @@ grant execute on function public.chat_v2_register(text) to authenticated;
 create or replace function public.chat_v2_claim_admin(p_secret text)
 returns boolean language plpgsql security definer
 set search_path = ''
-as $
+as $$
 declare
   v_uid uuid := auth.uid();
   v_updated integer;
@@ -122,7 +122,7 @@ begin
   get diagnostics v_updated = row_count;
   return v_updated = 1;
 end
-$;
+$$;
 revoke all on function public.chat_v2_claim_admin(text) from public, anon;
 grant execute on function public.chat_v2_claim_admin(text) to authenticated;
 
