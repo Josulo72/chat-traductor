@@ -2,7 +2,7 @@
    No toca nada que no sea del propio origen — las llamadas a Supabase
    (REST, Realtime, Auth, Functions) pasan de largo siempre. */
 
-const CACHE = 'chat-shell-v1'
+const CACHE = 'chat-shell-v2'
 
 // La app puede estar servida en la raíz o en un subdirectorio. La base se
 // deduce de dónde vive este propio fichero, así vale para las dos.
