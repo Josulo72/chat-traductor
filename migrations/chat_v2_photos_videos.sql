@@ -18,17 +18,16 @@ create or replace function public.chat_v2_media_allowed(p_name text)
 returns boolean language sql stable security definer
 set search_path=''
 as $$
- select
-  auth.uid() is not null
-  and exists (
-    select 1 from public.chat_v2_rooms r
-    where r.id::text = split_part(p_name,'/',1) and r.active
-    and (r.guest_id=auth.uid() or exists (
-       select 1 from public.chat_v2_config c where c.owner_id=auth.uid()
-    ))
-  )
-  and split_part(p_name,'/',2) = auth.uid()::text
-  and p_name ~ '^[0-9a-f-]{36}/[0-9a-f-]{36}/[0-9a-f-]{36}[.](jpg|jpeg|png|webp|gif|heic|heif|mp4|mov|webm)
+ select auth.uid() is not null
+ and exists (
+   select 1 from public.chat_v2_rooms r where r.id::text=split_part(p_name,'/',1)
+   and r.active and (r.guest_id=auth.uid() or exists (
+     select 1 from public.chat_v2_config c where c.owner_id=auth.uid()
+   ))
+ )
+ and split_part(p_name,'/',2)=auth.uid()::text
+ and p_name ~ '^[0-9a-f-]{36}/[0-9a-f-]{36}/[0-9a-f-]{36}[.](jpg|jpeg|png|webp|gif|heic|heif|mp4|mov|webm)$';
+$$;
 revoke all on function public.chat_v2_media_allowed(text) from public, anon;
 grant execute on function public.chat_v2_media_allowed(text) to authenticated;
 
