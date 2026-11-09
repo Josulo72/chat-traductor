@@ -19,6 +19,27 @@
 .back{display:none}.hidden{display:none!important}#addChatHeader{display:none}@media(max-width:700px){#addChatHeader{display:grid;place-items:center;flex-shrink:0;width:38px;height:38px;font-size:26px}.chat-head{gap:8px}.chat-head .avatar{flex-basis:34px;height:34px}.chat-head .ghost{font-size:12px;padding:7px}.chat-head h2{font-size:15px}}
 @media(max-width:700px){.layout.admin-list .sidebar{display:flex;width:100%;border:0}.layout.admin-list .chat{display:none}.layout.admin-chat .sidebar{display:none}.layout.admin-chat .chat{display:flex}.back{display:block}.chat-head{padding:12px 14px;min-height:65px}.messages{padding:18px 13px}.composer{padding:10px 12px max(12px,env(safe-area-inset-bottom))}.bubble{max-width:90%}}
 @media(min-width:701px){.chat-head .back{display:none}}
+
+/* Diseño móvil: identidad arriba, controles debajo, escritura siempre visible. */
+@media(max-width:700px){
+  .chat-head{display:flex;flex-wrap:wrap;align-content:start;align-items:center;gap:8px;padding:12px 12px 10px;min-height:0;overflow:visible}
+  .chat-head>.back,.chat-head>#addChatHeader,.chat-head>#headAvatar,.chat-head>.grow{order:0}
+  .chat-head>.grow{flex:1 1 calc(100% - 150px);min-width:0;max-width:none}
+  .chat-head>.grow h2,.chat-head>.grow p{white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:100%}
+  .chat-head>.grow h2{font-size:16px;line-height:1.2}
+  .chat-head>.grow p{font-size:11px;line-height:1.5}
+  .chat-head>.call-action,.chat-head>.photo-button,.chat-head>#renameMe,.chat-head>#close{order:2;flex:0 0 auto;height:36px;font-size:12px;padding:6px 10px}
+  .chat-head>.call-action:disabled{display:none}
+  .chat-head>#renameMe{white-space:nowrap}
+  .chat-head>#close{margin-left:auto}
+  .chat-head>.back,#addChatHeader{width:38px;height:38px;flex:0 0 38px}
+  .chat-head>.avatar{flex:0 0 34px;width:34px;height:34px}
+  .composer{gap:7px;padding:9px 9px max(9px,env(safe-area-inset-bottom));min-width:0;align-items:end}
+  .composer>.attach,.composer>.voice-button{width:38px;height:42px;min-width:38px;flex:0 0 38px;padding:0;display:grid;place-items:center;border-radius:12px;font-size:19px}
+  .composer textarea{min-width:0;flex:1 1 0;width:0;max-width:none;min-height:42px;padding:9px 10px;font-size:16px}
+  .composer>.send{height:42px;padding:0 12px;flex:0 0 auto;font-size:14px}
+  .messages{min-height:0}
+}
 </style>
 </head>
 <body><div id="app"><div class="busy">Conectando…</div></div>
